@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Movies</string>
+
+    <string name="pref_sort_label">Sort By</string>
+    <string name="action_settings">settings</string>
+
+
+    <string name="pref_sort_label_default">now-playing</string>
+    <string name="pref_sort_label_most_popular">most popular</string>
+    <string name="pref_sort_label_highest_rated">highest-rated</string>
+    <string name="pref_sort_label_favourite">Favourites</string>
+
+
+    <string name="pref_sort_key" translatable="false">sort</string>
+
+
+    <string name="pref_sort_default" translatable="false">default</string>
+    <string name="pref_sort_most_popular" translatable="false">most popular</string>
+    <string name="pref_sort_highest_rated" translatable="false">highest-rated</string>
+    <string name="pref_sort_favourite" translatable="false">favourite</string>
+    <string name="title_activity_detail">DetailActivity</string>
+    <string name="title_activity_settings">Settings</string>
+</resources>
