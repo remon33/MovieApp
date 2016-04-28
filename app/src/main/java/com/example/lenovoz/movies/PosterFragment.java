@@ -38,12 +38,17 @@ public class PosterFragment extends Fragment {
 
     private GridView gridview;
     private static final String SELECTED_KEY = "selected_position";
-    int index = 0;
+    private int mPosition ;
+    private boolean itemSelected;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         gridview = (GridView) rootView.findViewById(R.id.gridview);
+        if(savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)){
+            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+            Log.v("trace", "onview");
+        }
         return rootView;
     }
 
@@ -55,7 +60,10 @@ public class PosterFragment extends Fragment {
         FavouriteHelper db = new FavouriteHelper(getContext());
         new FetchMoviesData().execute();
         int position = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt(SELECTED_KEY, 0);
-        gridview.setSelection(position);
+        if(mPosition != GridView.INVALID_POSITION){
+            gridview.setSelection(mPosition);
+            Log.v("trace", "onstart");
+        }
     }
 
 
@@ -198,7 +206,8 @@ public class PosterFragment extends Fragment {
                                     voteAverate.get(position)
                             };
                             ((MainActivity)(getActivity())).onItemSelected(movieInfo);
-                            PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putInt(SELECTED_KEY, position).commit();
+                            mPosition = position;
+//                            PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putInt(SELECTED_KEY, position).commit();
 
                         }
                     });
@@ -225,6 +234,7 @@ public class PosterFragment extends Fragment {
                     gridview.setNumColumns(2);
                     gridview.setAdapter(new ImageAdapter(getContext(), movies.getPoster_image(), gridview.getRight() / 2, gridview.getBottom() / 2));
                 }
+
                 gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -239,13 +249,12 @@ public class PosterFragment extends Fragment {
                         };
 
                         ((MainActivity)(getActivity())).onItemSelected(movieInfo);
-                        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putInt(SELECTED_KEY, position).commit();
+                        mPosition = position;
+                        itemSelected = true;
+//                        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putInt(SELECTED_KEY, position).commit();
 
                     }
                 });
-
-
-
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -253,7 +262,20 @@ public class PosterFragment extends Fragment {
         }
     }
 
-
-
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if(MainActivity.mTwoPane && itemSelected){
+            if (mPosition != GridView.INVALID_POSITION){
+                outState.putInt(SELECTED_KEY, mPosition);
+                Log.v("trace", "outstate");
+            }
+            itemSelected = false;
+            return;
+        }
+        mPosition = gridview.getFirstVisiblePosition();
+        outState.putInt(SELECTED_KEY, mPosition);
+        Log.v("position", String.valueOf(gridview.getFirstVisiblePosition()));
+        super.onSaveInstanceState(outState);
+    }
 
 }
